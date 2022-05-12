@@ -98,7 +98,8 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 			return false;
 		} catch (Throwable t) {
 			if (debug.DEBUG_BUNDLE_FILE_OPEN) {
-				Debug.println("Caught Throwable while trying to lockOpen " + toString()); //$NON-NLS-1$
+				Debug.println("Caught Throwable " + t.getClass().getName() + " with message " + t.getMessage() //$NON-NLS-1$ //$NON-NLS-2$
+						+ " trying to lockOpen " + toString()); //$NON-NLS-1$
 				Debug.printStackTrace(t);
 			}
 			return false;

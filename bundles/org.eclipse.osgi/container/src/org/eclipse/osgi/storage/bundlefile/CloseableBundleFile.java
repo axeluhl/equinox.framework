@@ -94,6 +94,12 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 			// TODO not sure if throwing a runtime exception is better
 			// throw new RuntimeException("Failed to open bundle file.", e);
 			return false;
+		} catch (Throwable t) {
+			if (debug.DEBUG_BUNDLE_FILE_OPEN) {
+				Debug.println("Caught Throwable while trying to lockOpen " + toString()); //$NON-NLS-1$
+				Debug.printStackTrace(t);
+			}
+			return false;
 		}
 	}
 
@@ -141,9 +147,17 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 			} else {
 				mruListUse();
 			}
+		} catch (Throwable t) {
+			if (debug.DEBUG_BUNDLE_FILE_OPEN) {
+				Debug.println("OPENED bundle file " + toString() + " with exception " + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+				Debug.printStackTrace(t);
+			}
 		} finally {
 			if (!keepLock || closed) {
 				openLock.unlock();
+			} else if (debug.DEBUG_BUNDLE_FILE_OPEN) {
+				Debug.println("OPENED bundle file " + toString() + " and keeping lock because keepLock is " + keepLock //$NON-NLS-1$ //$NON-NLS-2$
+						+ " and closed is " + closed); //$NON-NLS-1$
 			}
 		}
 	}

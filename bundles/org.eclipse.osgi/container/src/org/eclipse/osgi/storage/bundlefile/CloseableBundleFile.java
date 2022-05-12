@@ -60,6 +60,8 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 
 	private int referenceCount = 0;
 
+	private StackTraceElement[] lastStackWhereOpenLockWasObtainedAndKept = null;
+
 	public CloseableBundleFile(File basefile, BundleInfo.Generation generation, MRUBundleFileList mruList, Debug debug) {
 		super(basefile);
 		this.debug = debug;
@@ -152,12 +154,17 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 				Debug.println("OPENED bundle file " + toString() + " with exception " + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 				Debug.printStackTrace(t);
 			}
+			throw t;
 		} finally {
 			if (!keepLock || closed) {
 				openLock.unlock();
-			} else if (debug.DEBUG_BUNDLE_FILE_OPEN) {
-				Debug.println("OPENED bundle file " + toString() + " and keeping lock because keepLock is " + keepLock //$NON-NLS-1$ //$NON-NLS-2$
+			} else {
+				lastStackWhereOpenLockWasObtainedAndKept = Thread.currentThread().getStackTrace();
+				if (debug.DEBUG_BUNDLE_FILE_OPEN) {
+					Debug.println(
+							"OPENED bundle file " + toString() + " and keeping lock because keepLock is " + keepLock //$NON-NLS-1$ //$NON-NLS-2$
 						+ " and closed is " + closed); //$NON-NLS-1$
+				}
 			}
 		}
 	}

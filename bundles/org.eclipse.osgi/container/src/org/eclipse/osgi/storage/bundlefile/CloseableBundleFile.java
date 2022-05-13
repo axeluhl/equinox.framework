@@ -61,6 +61,7 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 	private int referenceCount = 0;
 
 	private StackTraceElement[] lastStackWhereOpenLockWasObtainedAndKept = null;
+	private Throwable lastThrowable = null;
 
 	public CloseableBundleFile(File basefile, BundleInfo.Generation generation, MRUBundleFileList mruList, Debug debug) {
 		super(basefile);
@@ -98,6 +99,7 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 			return false;
 		} catch (Throwable t) {
 			if (debug.DEBUG_BUNDLE_FILE_OPEN) {
+				lastThrowable = t;
 				Debug.println("Caught Throwable " + t.getClass().getName() + " with message " + t.getMessage() //$NON-NLS-1$ //$NON-NLS-2$
 						+ " trying to lockOpen " + toString()); //$NON-NLS-1$
 				Debug.printStackTrace(t);

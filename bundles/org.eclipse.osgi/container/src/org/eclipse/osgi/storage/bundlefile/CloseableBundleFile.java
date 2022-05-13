@@ -121,6 +121,12 @@ public abstract class CloseableBundleFile<E> extends BundleFile {
 	 * @throws IOException
 	 */
 	private void open(boolean keepLock) throws IOException {
+		if (debug.DEBUG_BUNDLE_FILE_OPEN && lastThrowable != null) {
+			Debug.println("OPEN bundle file - " + toString() + " after throwable of type " //$NON-NLS-1$//$NON-NLS-2$
+					+ lastThrowable.getClass().getName() + " with message " + lastThrowable.getMessage() //$NON-NLS-1$
+					+ " was caught"); //$NON-NLS-1$
+			Debug.printStackTrace(lastThrowable);
+		}
 		openLock.lock();
 		try {
 			if (closed) {
